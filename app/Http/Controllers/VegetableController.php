@@ -40,6 +40,7 @@ class VegetableController extends Controller
         $vegetable->name = $request->input('name');
         $vegetable->weight = $request->input('weight');
         $vegetable->price = $request->input('price');
+        $vegetable->description = $request->input('description');
         $vegetable->save();
         return $vegetable;
     }
@@ -79,6 +80,7 @@ class VegetableController extends Controller
         $vegetable->name = $request->input('name');
         $vegetable->weight = $request->input('weight');
         $vegetable->price = $request->input('price');
+        $vegetable->description = $request->input('description');
         $vegetable->save();
         return $vegetable;
     }

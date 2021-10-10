@@ -18,6 +18,7 @@ class CreateVegetablesTable extends Migration
             $table->string('name');
             $table->double('weight');
             $table->double('price');
+            $table->string('description');
             $table->timestamps();
         });
     }

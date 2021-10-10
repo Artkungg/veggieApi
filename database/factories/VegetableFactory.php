@@ -24,7 +24,8 @@ class VegetableFactory extends Factory
         return [
             'name' => $this->faker->firstName(),
             'weight' => $this->faker->numberBetween(1,5),
-            'price' => $this->faker->numberBetween(30,100)
+            'price' => $this->faker->numberBetween(30,100),
+            'description' => $this->faker->realText(60)
         ];
     }
 }
