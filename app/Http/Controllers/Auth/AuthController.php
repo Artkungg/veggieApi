@@ -19,17 +19,18 @@ class AuthController extends Controller
         if(!$user || !Hash::check($field['password'],$user->password)){
             return response([
                'message' => 'Bad creds'
-            ],401);
+            ],400);
         }
 
         $token = $user->createToken('veggietoken')->plainTextToken;
+
 
         $response = [
             'user' => $user,
             'token' => $token
         ];
 
-        return response($response, 201);
+        return response($response, 200);
     }
 
     public function register(Request $request){

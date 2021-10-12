@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -12,9 +13,15 @@ class CartController extends Controller
      *
      * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        $cart = Cart::with('orders')->get();
+        $user = User::findOrFail($id);
+        if($user->role === 'CUSTOMER'){
+            $cart = Cart::where('user_id',$id)->with('orders')->get();
+        }
+        else{
+            $cart = Cart::with('orders')->get();
+        }
         return $cart;
     }
 
@@ -37,6 +44,7 @@ class CartController extends Controller
     public function store(Request $request)
     {
         $cart = new Cart;
+        $cart->user_id = $request->input('user_id');
         $cart->number = $request->input('number');
         $cart->order_date = $request->input('order_date');
         $cart->amount = $request->input('amount');
@@ -78,6 +86,7 @@ class CartController extends Controller
     public function update(Request $request, $id)
     {
         $cart = Cart::findOrFail($id);
+        $cart->user_id = $request->input('user_id');
         $cart->number = $request->input('number');
         $cart->order_date = $request->input('order_date');
         $cart->amount = $request->input('amount');

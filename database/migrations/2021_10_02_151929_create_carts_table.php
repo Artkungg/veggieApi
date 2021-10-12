@@ -15,6 +15,7 @@ class CreateCartsTable extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(\App\Models\User::class);
             $table->string('number');
             $table->string('order_date');
             $table->double('amount');

@@ -31,7 +31,7 @@ Route::prefix('/vegetable')->group(function (){
     Route::delete('/{id}',[\App\Http\Controllers\VegetableController::class,'destroy']);
 });
 
-Route::get('/carts',[\App\Http\Controllers\CartController::class,'index']);
+Route::get('/carts/{id}',[\App\Http\Controllers\CartController::class,'index']);
 Route::prefix('/cart')->group(function (){
     Route::get('/{id}',[\App\Http\Controllers\CartController::class,'show']);
     Route::get('/count/{id}',[\App\Http\Controllers\CartController::class,'count']);
