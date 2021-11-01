@@ -16,8 +16,10 @@ class CreateCartsTable extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\User::class);
+            $table->string('customer_name')->default('-');
+            $table->string('address')->default('-');
+            $table->string('phone_number')->default('-');
             $table->string('number');
-            $table->string('order_date');
             $table->double('amount');
             $table->string('status');
             $table->string('receive_date');

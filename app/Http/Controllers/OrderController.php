@@ -38,9 +38,10 @@ class OrderController extends Controller
     {
         $order = new Order();
         $order->cart_id = $request->input('cart_id');
+        $order->vegetable_id = $request->input('vegetable_id');
         $order->name = $request->input('name');
-        $order->weight = $request->input('weight');
-        $order->price = $request->input('price');
+        $order->total_weight = $request->input('total_weight');
+        $order->total_price = $request->input('total_price');
         $order->save();
         return $order;
     }
@@ -79,8 +80,8 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $order->cart_id = $request->input('cart_id');
         $order->name = $request->input('name');
-        $order->weight = $request->input('weight');
-        $order->price = $request->input('price');
+        $order->total_weight = $request->input('total_weight');
+        $order->total_price = $request->input('total_price');
         $order->save();
         return $order;
     }
@@ -98,6 +99,6 @@ class OrderController extends Controller
     }
 
     public function getAmount($id){
-        return Order::where('cart_id',$id)->sum('price');
+        return Order::where('cart_id',$id)->sum('total_price');
     }
 }

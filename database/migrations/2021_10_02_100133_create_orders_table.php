@@ -16,9 +16,10 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Cart::class);
+            $table->foreignIdFor(\App\Models\Vegetable::class);
             $table->string('name');
-            $table->double('weight');
-            $table->double('price');
+            $table->double('total_weight');
+            $table->double('total_price');
             $table->timestamps();
         });
     }

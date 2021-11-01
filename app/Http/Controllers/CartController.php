@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -15,14 +16,59 @@ class CartController extends Controller
      */
     public function index($id)
     {
-        $user = User::findOrFail($id);
-        if($user->role === 'CUSTOMER'){
-            $cart = Cart::where('user_id',$id)->with('orders')->get();
+//        $user = User::findOrFail($id);
+//        if($user->role === 'CUSTOMER'){
+//            $cart = Cart::where('user_id',$id)->with('orders')->get();
+//        }
+//        else{
+//            $cart = Cart::with('orders')->get();
+//        }
+        $carts = Cart::where([['user_id',$id],['status','!=','cancel']])->with('orders')->get();
+        return $carts;
+    }
+
+    public function getFromDate($id)
+    {
+        //get today
+        if($id == 1){
+            $today = Carbon::today()->format('Y-m-d');
+            $carts = Cart::where('created_at','>=',$today)->where('status','success')->get();
+            $sum = Cart::where('created_at','>=',$today)->where('status','success')->sum('amount');
         }
+
+        //this week
+        elseif($id == 2) {
+            $today = Carbon::today();
+            $weekStartDate = $today->startOfWeek()->format('Y-m-d');
+            $weekEndDate = $today->endOfWeek()->format('Y-m-d');
+            $carts = Cart::where([['created_at', '>=', $weekStartDate],['created_at', '<=', $weekEndDate]])
+                            ->where('status','success')->get();
+            $sum = Cart::where([['created_at', '>=', $weekStartDate],['created_at', '<=', $weekEndDate]])
+                ->where('status','success')->sum('amount');
+        }
+
+        //this month
+        elseif($id == 3){
+            $start = Carbon::now()->startOfMonth();
+            $end = Carbon::now()->endOfMonth();
+            $carts = Cart::where([['created_at','>=',$start],['created_at','<=',$end]])
+                ->where('status','success')->get();
+            $sum = Cart::where([['created_at','>=',$start],['created_at','<=',$end]])
+                ->where('status','success')->sum('amount');
+        }
+
+        //show all cart list
         else{
-            $cart = Cart::with('orders')->get();
+            $carts = Cart::where('status','success')->get();
+            $sum = Cart::where('status','success')->sum('amount');
         }
-        return $cart;
+
+        $response = [
+            'carts' => $carts,
+            'sum' => $sum
+        ];
+
+        return $response;
     }
 
     /**
@@ -46,7 +92,6 @@ class CartController extends Controller
         $cart = new Cart;
         $cart->user_id = $request->input('user_id');
         $cart->number = $request->input('number');
-        $cart->order_date = $request->input('order_date');
         $cart->amount = $request->input('amount');
         $cart->status = $request->input('status');
         $cart->receive_date = $request->input('receive_date');
@@ -62,7 +107,26 @@ class CartController extends Controller
      */
     public function show($id)
     {
-        return Cart::with('orders')->findOrFail($id);
+        $cart = Cart::with('orders')->findOrFail($id);
+//        $this->authorize('view',$cart);
+        return $cart;
+    }
+
+    public function showByCartStatus($type)
+    {
+        if($type == 1) {
+            $cart = Cart::where('status','pending confirm')->with('orders')->get();
+        }
+        elseif ($type == 2){
+            $cart = Cart::where('status','Delivery')->with('orders')->get();
+        }
+        elseif ($type == 3){
+            $cart = Cart::where('status','Pick up')->with('orders')->get();
+        }
+        elseif ($type == 4){
+            $cart = Cart::with('orders')->get();
+        }
+        return $cart;
     }
 
     /**
@@ -88,10 +152,19 @@ class CartController extends Controller
         $cart = Cart::findOrFail($id);
         $cart->user_id = $request->input('user_id');
         $cart->number = $request->input('number');
-        $cart->order_date = $request->input('order_date');
         $cart->amount = $request->input('amount');
         $cart->status = $request->input('status');
         $cart->receive_date = $request->input('receive_date');
+        $cart->save();
+        return $cart;
+    }
+
+    public function pay(Request $request, $id){
+        $cart = Cart::findOrFail($id);
+        $cart->customer_name = $request->input('customer_name');
+        $cart->address = $request->input('address');
+        $cart->phone_number = $request->input('phone_number');
+        $cart->status = $request->input('status');
         $cart->save();
         return $cart;
     }
@@ -111,4 +184,5 @@ class CartController extends Controller
     public function count($id){
         return Cart::findOrFail($id)->orders->count();
     }
+
 }

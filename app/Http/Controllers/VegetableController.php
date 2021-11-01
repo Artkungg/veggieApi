@@ -37,9 +37,9 @@ class VegetableController extends Controller
     public function store(Request $request)
     {
         $vegetable = new Vegetable;
-        $vegetable->name = $request->input('name');
-        $vegetable->weight = $request->input('weight');
-        $vegetable->price = $request->input('price');
+        $vegetable->veg_name = $request->input('veg_name');
+        $vegetable->veg_weight = $request->input('veg_weight');
+        $vegetable->veg_price = $request->input('veg_price');
         $vegetable->description = $request->input('description');
         $vegetable->save();
         return $vegetable;
@@ -77,9 +77,9 @@ class VegetableController extends Controller
     public function update(Request $request, $id)
     {
         $vegetable = Vegetable::findOrFail($id);
-        $vegetable->name = $request->input('name');
-        $vegetable->weight = $request->input('weight');
-        $vegetable->price = $request->input('price');
+        $vegetable->veg_name = $request->input('veg_name');
+        $vegetable->veg_weight = $request->input('veg_weight');
+        $vegetable->veg_price = $request->input('veg_price');
         $vegetable->description = $request->input('description');
         $vegetable->save();
         return $vegetable;
@@ -98,7 +98,7 @@ class VegetableController extends Controller
     }
 
     public function getVeggie($name){
-        $veggie = Vegetable::where('name',$name)->get();
+        $veggie = Vegetable::where('veg_name',$name)->get();
         return Vegetable::findOrFail($veggie[0]->id);
     }
 }

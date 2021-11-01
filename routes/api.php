@@ -18,6 +18,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+//Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
+//    Route::post('login',[\App\Http\Controllers\Auth\AuthController::class,'login']);
+//    Route::post('register',[\App\Http\Controllers\Auth\AuthController::class,'register']);
+//    Route::post('logout',[\App\Http\Controllers\Auth\AuthController::class,'logout']);
+//});
+
 Route::post('/register',[\App\Http\Controllers\Auth\AuthController::class,'register']);
 Route::post('/logout',[\App\Http\Controllers\Auth\AuthController::class,'logout']);
 Route::post('/login',[\App\Http\Controllers\Auth\AuthController::class,'login']);
@@ -32,8 +38,11 @@ Route::prefix('/vegetable')->group(function (){
 });
 
 Route::get('/carts/{id}',[\App\Http\Controllers\CartController::class,'index']);
+Route::get('/carts/type/{id}',[\App\Http\Controllers\CartController::class,'getFromDate']);
+Route::put('/pay/{id}',[\App\Http\Controllers\CartController::class,'pay']);
 Route::prefix('/cart')->group(function (){
     Route::get('/{id}',[\App\Http\Controllers\CartController::class,'show']);
+    Route::get('/show/{type}',[\App\Http\Controllers\CartController::class,'showByCartStatus']);
     Route::get('/count/{id}',[\App\Http\Controllers\CartController::class,'count']);
     Route::post('/store',[\App\Http\Controllers\CartController::class,'store']);
     Route::put('/{id}',[\App\Http\Controllers\CartController::class,'update']);
